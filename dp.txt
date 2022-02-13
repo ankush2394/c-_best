@@ -1,0 +1,510 @@
+Dynamic Programming
+
+Choice and asking optimal(max, min , etc)
+      |
+      |
+Recursive ——> Memoize ——> Top down
+
+(Parent Questions)
+
+1. 0-1 Knapsack(6+problems)
+2. Unbounded Knapsack(5+problems)
+3. Fibonacci(7+)
+4. LCS(15+)
+5. LIS(10+)
+6. Kadane’s Algo(6+)
+7. Matrix Chain Multiplication(7+)
+8. Dp on trees(4)
+9. DP on Grid(14+)
+10. Others(5)
+
+1. 0-1 Knapsack(6+problems)
+    1. Subset Sum
+    2. Equal Sum Partition
+    3. Count of subset sum
+    4. Min subset sum diff
+    5. Target sum
+    6. #of subsets that gives
+
+0-1 Knapsack->
+
+	wt[]:  1, 2, 3, 4
+	val[]:  9, 2 , 1 ,2
+	W: 7
+
+Recursion Code -> Make Choice Diagram first then recursion is just simplest -> Always think base condition next
+
+Choice Diagram <-> 0-1 Knapsack
+
+if wt[item]> Wt[Bag]
+    we cant chose it
+else
+    choice is to take it or not take it
+
+int knapsack(int wt[], int val[], int W, int n) {
+    Base Condition  //tricky
+    Choice Diagram  //simplest
+}
+
+Base Condition -> Think of the smallest valid input, either number of items or weight of bag can be zero
+                  if (n==0 || W==0)
+                    return 0
+Choice Diagram  -> starting from back to reduce the array, if we include it
+                   if (wt[n-1]<=W) {
+                        return max(val[n-1] + knapsack(wt, val, W-wt[n-1), n-1), knapsack(wt, val, W, n-1))
+                   } else {
+                        return knapsack(wt,val,W,n-1)
+                   }
+
+####Recursion####
+int knapsack(int wt[], int val[], int W, int n) {
+
+     if (n==0 || W==0)
+        return 0
+
+    if (wt[n-1]<=W) {
+        return max(val[n-1] + knapsack(wt, val, W-wt[n-1), n-1), knapsack(wt, val, W, n-1))
+   } else {
+        return knapsack(wt,val,W,n-1)
+   }
+}
+
+####Recursion+Memoization####
+
+int dp[n+1][W+1];
+memset(dp,-1,sizeof(dp));
+int knapsack(int wt[], int val[], int W, int n) {
+
+     if (n==0 || W==0)
+        return 0
+    ####useCase###
+    if (dp[n][W]!=-1) {
+        return dp[n][W];
+    }
+
+    if (wt[n-1]<=W) {
+        return dp[n][W] = max(val[n-1] + knapsack(wt, val, W-wt[n-1), n-1), knapsack(wt, val, W, n-1));
+   } else {
+        return dp[n][W] = knapsack(wt,val,W,n-1);
+   }
+}
+
+--------------Knapsack Pattern -> have to choose it or not and we may be given an array--------------------
+-----------------Related Problems----------------------------
+-----------------May contain one/two arrays,if one consider it as weight array-------------------------------------
+1. Subset Sum 2. Equal Sum Partition 3. Count of subset sum 4. Min subset sum diff 5. Target sum 6. #of subsets that gives
+
+
+---------subset sum problem-------
+Given an array if there exists a subset with given sum
+arr[] = [2,3,7,8,10]
+sum =11
+int dp[n+1][sum+1];
+memset(dp,-1,sizeof(dp));
+bool exists(int arr[], int n, int sum) {
+    if(sum==0) {
+        return true;
+    }
+    if (n<=0) {
+        return false;
+    }
+
+     if (dp[n][sum]!=-1) {
+        return dp[n][sum];
+     }
+
+    if (arr[n-1]<=sum) {
+        return dp[n][sum] = exists(arr,n-1,sum-arr[n-1] ) || exists(arr, n-1,sum)
+    } else {
+        return dp[n][sum] = exists(arr, n-1,sum);
+    }
+}
+
+---------equal sum partition problem-------
+arr[] = {1,5,11,5}
+op = true/false
+
+can we divide the array into two subsets such that the sum of two parts are equal
+
+Approach - Add all elements , if !divisible by two then false
+            if  divisible by two, then K = divide by two
+            now problem is if a subset exists with sum K
+
+
+---------count of subsets with given sum problem-------
+arr[5] = {2,3,7,8,10};
+sum =15
+
+ans= 2
+
+int countSubsetWithGivenSum(int arr[], int n, int sum) {
+
+    if (sum==0) {
+        return 1;
+    }
+    if (n==0) {
+        return 0;
+    }
+
+    if (arr[n-1]<=sum) {
+        return countSubsetWithGivenSum(arr,n-1,sum-arr[n-1]) + countSubsetWithGivenSum(arr,n-1,sum); //including+excluding all subsets
+    } else {
+        return countSubsetWithGivenSum(arr,n-1,sum);
+    }
+}
+
+---------count of subsets with given diff problem-------
+arr[] = [1,2,3,4]
+diff = 1
+s1-s2 = diff
+s1+s2= sum off all elements
+
+s1 = (diff+sum off all elements)/2
+find total number of subsets with sum s1
+
+
+---------******** Target sum problem ***********-------
+arr[] = [1,2,3,4]
+Sum= 2
+add +/- in front of every element , when sum give the target sum, count total ways we can achieve it so that sum is Sum
+
+Approach->
+{-1+2-3+4} --> separate + and - elements, {2,4} {-1,-3} and take - common out , {2,4} - {1,3} ==> give sum as it diff
+Identical to `count of subsets with given diff problem`
+
+------------------------------------------------------------------------------------------------------------------------
+
+Unbounded Knapsack(5+problems)
+
+    If we can chose 1 item , we can still choose it multiple times(kind of unprocessed), unlike 0-1 knapsack, where we took it once and mark it processed
+    If i like ice cream, how many times i have been offered i will take it everytime, if i dont like it, i will never take it, so it will be processed
+
+    1. Rod Cutting
+    2. Coin Change
+    3. Coin Change 2
+    4. Max Ribbon Cut
+
+Same initialisation , just when we can chose it, we can chose it multiple times, dont mark it processed
+
+int unbounded_knapsack(int wt[], int val[], int n, int W ) {
+    if (n==0 || W==0) {
+        return 0;
+    }
+
+    if (wt[n-1]<=W) {
+        return max(val[n-1]+unbounded_knapsack(wt, val, n, W-wt[n-1]), unbounded_knapsack(wt, val, n-1, W))
+    } else {
+        return unbounded_knapsack(wt, val, n-1, W);
+    }
+
+}
+
+1. Rod Cutting
+
+length[] = [1,2,3,4,5,6,7,8]
+price[] = [1,4,5,6,7,8,8,3]
+N=8
+Max Profit we can get by cutting it
+
+I will take that rod and divide with that part and include its price but i can again use that part , thats true,
+my length is 9 , i cut one part of length 3 and i can again cut the remnaing part 6 with length 3
+
+int rodCuttingProfit(int length[], int price[], int n, int N) {
+    if (N<=0 || n==0) {
+        return 0;
+    }
+    if (length[n-1]<=N) {
+        return max(price[n-1]+rodCuttingProfit(length, price, n,  N-n), rodCuttingProfit(length, price, n-1, N);
+    } else {
+        return rodCuttingProfit(length, price, n-1, N);
+    }
+}
+//just memoize it by filling with -1 of dp array
+
+2. Coin Change
+
+coin[] = [1,2,3]
+sum= 5
+#print total ways to achieve the sum using coins as many times
+
+int totalWays(int coins[], int n, int sum) {
+    if (sum==0) {
+        return 1;
+    }
+    if (n==0) {
+        return 0;
+    }
+    if (coins[n-1]<=sum) {
+        return totalWays(length, price, n, sum-coins[n-1]) + totalWays(coins, n-1, sum);
+    } else {
+        return totalWays(coins, n-1, sum);
+    }
+}
+
+
+3. Coin Change 2
+Min coins needed to give sum
+
+coin[] = [1,2,3]
+sum= 5
+#print min coins to achieve the sum using coins as many times
+
+int minCoins(int coins[], int n, int sum) {
+   if(n==0){
+    return INT_MAX-1; //this is tricky since we are adding +1, it should not go out of bounds, also if we have 0 coins we try infinite times
+   }
+
+   if (sum==0) {
+       return 0;
+   }
+    if (coins[n-1]<=sum) {
+        return min(1+minCoins(coins, n, sum-coins[n-1]) , minCoins(coins, n-1, sum));
+    } else {
+        return minCoins(coins, n-1, sum);
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+Longest Common Subsequence LCS(15+)
+
+str1="abcde"
+str2="bcdae"
+
+//memoize using same ways
+int dp[n+1][m+1];
+memset(dp,-1,sizeof(dp));
+
+
+int lcs(string str1, string str2, int n, int m) {
+    if (n==0 || m==0 ) {
+        return 0;
+    }
+
+    if (str1[n-1] == str2[m-1]) {
+        return 1+lcs(str1, str2, n-1,m-1);
+    } else {
+        return max(lcs(str1, str2, n,m-1), lcs(str1, str2, n-1,m));
+    }
+
+}
+
+
+Related Problems----> (very simple)
+    Longest Common Substring
+    Shortest Common Super sequence (m+n-lcs(a,b))
+    Longest Palindromic subsequence - Take one string , reverse it and find lcs
+   *Longest Pallindromic Substring
+    Min insertion deletion to make string palindrome- Take one string , reverse it and find lcs, and then length - lcs()
+    Min Insertion Deletion to convert string a to b - find lcs(a,b), and then do maxlength(a,b)-lcs(a,b)
+
+
+3.1
+Longest Common Substring
+
+string1 = "abcde", string2= "abfce"
+Substring is continuous, so as soon as it is discontinuous we mark it to zero
+
+int lcSubstring(string str1, string str2, int n, int m) {
+    if (n==0 || m==0 ) {
+        return 0;
+    }
+
+    if (str1[n-1] == str2[m-1]) {
+        return 1+lcs(str1, str2, n-1,m-1);
+    } else {
+        return 0;
+    }
+}
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    MATRIX CHAIN MULTIPLICATION
+
+We will be given an array or a string and we have to take i and j , and we want/can break/move in multiple times
+we will break i to k and k+1 to j and it can have many variations based upon questions
+Find k loop scheme and start of i and j and temp Ans thinkining
+
+----------FORMAT------------
+int solve(int arr[], int i, int j) {
+    if (i>j) {
+        return 0;
+    }
+    for(int k=i;k<j;k++) {
+        int tempAns1 = solve(arr,i,k);
+        int tempAns2 = solve(arr,k+1,j);
+
+        //then we apply question relevant function to get the final answer
+        ans = Function(tempAns1, tempAns2)
+
+    }
+
+    return ans;
+}
+
+arr[] = {40,20,30,10,30}   -> 40*20, 20*30, 30*10, 10*30 --> 4 matrices deduced by the array of sizes
+A1 = 40*20, A2 = 20*30 , .....etc.., `Dimension of A[i] = A[i-1]*A[i]`
+(A1)*(A2*A3), (A1*A2)*A3    -----> Put parenthesis in such a way that cost come out to be min
+We have to minimise the cost of multiplication, ie #number of operations in multiplication
+
+------------------------------------------------------------------------------------------------------------------------
+---i should be 1 else -ve ---
+int solve(int arr[], int i, int j) {
+    if (i>=j) {
+        return 0;
+    }
+    int ans = INT_MAX;
+    for(int k=i;k<j;k++) {
+        int tempAns1 = solve(arr,i,k);
+        int tempAns2 = solve(arr,k+1,j);
+        int tempAns3 = arr[i-1]*arr[k]*arr[j];
+
+        //calculate cost of multiplications
+        ans = min(ans, tempAns1*tempAns2+tempAns3)
+
+    }
+
+    return ans;
+}
+####memoised#####
+int solve(int arr[], int i, int j) {
+    if (i>=j) {
+        return 0;
+    }
+
+    if (dp[i][j]!=-1) {
+        return dp[i][j];
+    }
+    int ans = INT_MAX;
+    for(int k=i;k<j;k++) {
+        int tempAns1 = solve(arr,i,k);
+        int tempAns2 = solve(arr,k+1,j);
+        int tempAns3 = arr[i]*arr[k]*arr[j];
+
+        //calculate cost of multiplications
+        ans = min(ans, tempAns1+tempAns2+tempAns3)
+
+    }
+
+    return dp[i][j] = ans;
+}
+
+solve(arr, 1 , n-1);
+------------Related Problems--------
+1.1 Palindrome Partitioning
+
+given a string s eg(`nitin`), find min number of partitions so that every resultant string after partitioning is a palindrome
+
+Worst case - Length of string, (lol)
+If string is already a palindrome then 0
+
+i=0, j = n-1
+int palindromePartitioning(int s, int i, int j) {
+    if (i>=j) {
+        return 0;
+    }
+    if (isPalindrome(s,i,j)) {
+        return 0;
+    }
+    int ans = INT_MAX;
+    for(int k=i;k<j;k++) {
+        int tempAns1 = palindromePartitioning(s,i,k);
+        int tempAns2 = palindromePartitioning(s,k+1,j);
+        int tempAns3 = 1;   //one cut we place
+
+        //add total cuts required
+        ans = min(ans, tempAns1+tempAns2+tempAns3)
+
+    }
+
+    return ans;
+}
+#########memoize in similar manner#####
+
+1.2 Egg Dropping Problem ****(Interesting Problems)
+
+number of egs, number of floors,
+I/P
+e =3
+f = 5,[1,2,3,4,5]
+O/P = minimise number of attempts to get threshold floor in worst case
+
+i=1, j=f
+int getMinAttemptsToFindThreshold(int e, int f) {
+ if (f==0 || f==1) {
+     return f;
+ }
+ if (e==1) {
+    return f;
+ }
+ int ans = INT_MAX;
+ for(int k=1;k<=f;k++) {
+     int tempAns1 = getMinAttemptsToFindThreshold(e-1,k-1); //egg break at k
+     int tempAns2 = getMinAttemptsToFindThreshold(e,f-k); //egg didnt break at k
+     //one attempt of drop we place at kth floor
+
+     ans = min(ans, 1 + max(tempAns1,tempAns2))
+ }
+ return ans;
+}
+#########memoize in similar manner#####
+
+1.3 Scrambled String Problem(Interesting Problems)
+1.4 Evaluate expression to true Boolean Parenthesis(Interesting Problems)
+
+1.4 Evaluate expression to true Boolean Parenthesis(Interesting Problems)
+
+Given a string here -> T^F&T (containing T and F and operations like &,|,^), we have to count number of ways to achieve true in resultant expresion
+
+(T^F)&T = T&T = T, basically put brackets such that left and right when done operation k, will give true
+
+i=0, j=n-1 //think, it lacks a bit case , <---- we have to evaluate false case as well---> becz. (F^T) -> true
+int numberofways(string str, int i, int j, bool isTrue) {
+if (i>j) {
+    return 0;
+}
+if (i==j) {
+    if (isTrue == true) {
+        return s[i]=='T';
+    } else {
+        return s[i]=='F';
+    }
+}
+ int ans = 0;
+ for(int k=i+1;k<j-1;k+=2) {
+     int leftTrue = numberofways(str,i,k-1,1, true);
+     int leftFalse = numberofways(str,i,k-1,1, false);
+     int righttrue = numberofways(str,k+1,j, true);
+     int rightfalse = numberofways(str,k+1,j, false);
+     int  res = tempAns1+ tempAns2;
+     if (str[k]=='&') {
+        if (istrue) {
+            ans += leftTrue*righttrue;
+        } else {
+            ans += leftFalse*righttrue + leftTrue*rightFalse+ leftFalse*rightFalse;
+        }
+     }
+     if (str[k]=='|') {
+
+          if (istrue) {
+
+             ans +=leftFalse*righttrue + leftTrue*rightFalse + leftTrue*righttrue;
+         } else {
+             ans += leftFalse*rightFalse;
+         }
+     }
+
+     if (str[k]=='^') {
+            if (istrue) {
+                ans +=leftTrue*rightFalse + leftTrue*righttrue;
+            } else {
+                ans += leftFalse*rightFalse + leftFalse*righttrue;
+            }
+        }
+ }
+ return ans;
+}
+
+
+
