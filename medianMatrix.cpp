@@ -26,18 +26,20 @@ int matrixMedian(vector<vector<int>> matrix) {
         for(int i=0;i<n;i++) {
             countElemsSmallerEqualMid += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
         }
-        if(countElemsSmallerEqualMid<desired) {
+        if(countElemsSmallerEqualMid==desired) {
+            return mid;
+        } else if(countElemsSmallerEqualMid<desired) {
             l = mid+1;
         } else {
-            r=mid;
+            r=mid-1;
         }
     }
-    return l;
+    return -1;
 
 }
 
 //int main() {
-//    cout<<matrixMedian(vector<vector<int>> {{1,2,3},{4,5,6},{7,8,9}});
+//    cout<<matrixMedian(vector<vector<int>> {{1,2,3,4,5},{4,5,6,7,9},{7,8,9,11,12}});
 //    return 0;
 //}
 
