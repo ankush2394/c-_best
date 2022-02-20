@@ -22,11 +22,11 @@ int matrixMedian(vector<vector<int>> matrix) {
     int desired = (n*m)/2+1;
     while (l<r) {
         int mid = l +(r-l)/2;
-        int countElemsSmallerMid=0;
+        int countElemsSmallerEqualMid=0;
         for(int i=0;i<n;i++) {
-            countElemsSmallerMid += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+            countElemsSmallerEqualMid += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
         }
-        if(countElemsSmallerMid<desired) {
+        if(countElemsSmallerEqualMid<desired) {
             l = mid+1;
         } else {
             r=mid;
