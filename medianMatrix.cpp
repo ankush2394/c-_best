@@ -26,15 +26,13 @@ int matrixMedian(vector<vector<int>> matrix) {
         for(int i=0;i<n;i++) {
             countElemsSmallerEqualMid += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
         }
-        if(countElemsSmallerEqualMid==desired) {
-            return mid;
-        } else if(countElemsSmallerEqualMid<desired) {
+        if(countElemsSmallerEqualMid<desired) {
             l = mid+1;
         } else {
-            r=mid-1;
+            r=mid;
         }
     }
-    return -1;
+    return l;
 
 }
 
