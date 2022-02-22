@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 
@@ -38,4 +39,28 @@ public:
                 }
             }
         }
+
+    /// O(n ) with O(n) memory
+
+    int trap(vector<int>& height) {
+        vector<pair<int, int>> store;
+        int left_max = INT_MIN;
+        int right_max = INT_MIN;
+        for(int i=0;i<height.size();i++) {
+            store[i].first = max(height[i], left_max);
+            left_max = max(height[i], left_max);
+        }
+
+        for(int i=height.size()-1;i>=0;i--) {
+            store[i].second = max(height[i], right_max);
+            right_max = max(height[i], right_max);
+        }
+
+        int ans=0;
+        for(int i=0;i<height.size();i++) {
+            int dif = abs(min(store[i].first,store[i].second)-height[i]);
+            ans += dif;
+        }
+        return ans;
+    }
 };
