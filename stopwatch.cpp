@@ -42,12 +42,12 @@ public:
     }
 };
 
-int main() {
-
-    StopWatch stopWatch;
-    stopWatch.startIt();
-    usleep(100);
-    cout<<"**";
-    stopWatch.stopWat();
-    return 0;
-}
+//int main() {
+//
+//    StopWatch stopWatch;
+//    stopWatch.startIt();
+//    usleep(100);
+//    cout<<"**";
+//    stopWatch.stopWat();
+//    return 0;
+//}
